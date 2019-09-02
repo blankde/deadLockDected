@@ -34,31 +34,28 @@ void dFSCheck(vector<vector<int> >&wfg, int vertex, vector<int>& visit, vector<i
 	visit[vertex] = 2;
 }
 
-bool TopSort(vector<vector<int>> &G, int n, vector<int> &inDegree) {
-	/*
-	*	param
-	*	G：	邻接表
-	*	n：	顶点数
-	*	InDegree：	记录顶点的入度
-	*/
-	int num = 0;				//记录加入拓扑排序的顶点数
-	queue<int> q;
+bool TopSort(vector<vector<int>> &wfg, int n, vector<int> &inDegree) {
+	int num = 0;
+	//used for topsort
+	queue<int> zero_queue;
 	for (int i = 0; i < n; i++)
+		//push the node which indegree is 0
 		if (inDegree[i] == 0)
-			q.push(i);		//将所有入度为0的顶点入队
-	while (!q.empty()) {
-		int u = q.front();		//取队首顶点u
-		q.pop();
-		for (int i = 0; i < G[u].size(); i++) {
-			int v = G[u][i];		//u的后继节点
-			inDegree[v]--;			//v的入度减1
-			if (inDegree[v] == 0)		//顶点v的入度减为0则入队
-				q.push(v);
+			zero_queue.push(i);
+	while (!zero_queue.empty()) {
+		int u = zero_queue.front();
+		zero_queue.pop();
+		for (int i = 0; i < wfg[u].size(); i++) {
+			int v = wfg[u][i];
+			inDegree[v]--;
+			if (inDegree[v] == 0)
+				zero_queue.push(v);
 		}
-		G[u].clear();			//清空顶点u的所有出边
+		wfg[u].clear();
 		num++;
 	}
-	if (num == n)				//加入拓扑序列的顶点数为n，说明拓扑排序成功，否则，失败
+	//if topsort success, it is non-circle, otherwise it has circles
+	if (num == n)
 		return true;
 	else
 		return false;
